@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SideQuest — Not a dating app. A dating experience.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #e87500;
+      --orange-bright: #ff9a2e;
+      --orange-dark: #c46200;
+      --green: #053d2c;
+      --green-light: #0d6b4a;
+      --green-pale: #e8f5ef;
+      --dark: #0d0906;
+      --dark-card: #1a1411;
+      --dark-card-border: #2a2017;
+      --cream: #fff8f2;
+      --text-dim: rgba(255,255,255,0.55);
+      --text-med: rgba(255,255,255,0.8);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--dark);
+      color: #fff;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ========== UTILITIES ========== */
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    .fade-in { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .text-orange { color: var(--orange-bright); }
+    .text-green { color: var(--green-light); }
+
+    /* ========== HERO ========== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg .gradient {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(232,117,0,0.25) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 20% 80%, rgba(5,61,44,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse 40% 40% at 80% 70%, rgba(232,117,0,0.12) 0%, transparent 50%);
+    }
+
+    .hero-bg .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+    }
+
+    .hero-bg .orb-1 {
+      width: 500px; height: 500px;
+      background: var(--orange);
+      top: -150px; left: -100px;
+      animation: orbMove1 20s ease-in-out infinite;
+    }
+
+    .hero-bg .orb-2 {
+      width: 350px; height: 350px;
+      background: var(--green-light);
+      bottom: -100px; right: -50px;
+      animation: orbMove2 25s ease-in-out infinite;
+    }
+
+    .hero-bg .orb-3 {
+      width: 200px; height: 200px;
+      background: var(--orange-bright);
+      top: 40%; right: 10%;
+      animation: orbMove3 18s ease-in-out infinite;
+    }
+
+    .hero-bg .grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    @keyframes orbMove1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(60px, 30px) scale(1.08); }
+      66% { transform: translate(-30px, -20px) scale(0.95); }
+    }
+
+    @keyframes orbMove2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-40px, -30px) scale(1.05); }
+      66% { transform: translate(30px, 20px) scale(0.92); }
+    }
+
+    @keyframes orbMove3 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-50px, 30px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 8px 18px;
+      background: rgba(232,117,0,0.15);
+      border: 1px solid rgba(232,117,0,0.3);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--orange-bright);
+      margin-bottom: 28px;
+      letter-spacing: 0.03em;
+    }
+
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-med);
+      margin-bottom: 40px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .countdown-container {
+      display: inline-flex;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .countdown-unit {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 16px 12px;
+      min-width: 72px;
+      backdrop-filter: blur(8px);
+    }
+
+    .countdown-unit .number {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--orange-bright);
+      line-height: 1;
+    }
+
+    .countdown-unit .label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 6px;
+    }
+
+    .path-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .path-btn {
+      padding: 16px 36px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .path-btn-primary {
+      background: var(--orange);
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(232,117,0,0.35);
+    }
+
+    .path-btn-primary:hover {
+      background: var(--orange-bright);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(232,117,0,0.45);
+    }
+
+    .path-btn-secondary {
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .path-btn-secondary:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: var(--green-light);
+      color: var(--green-pale);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .hero-scroll-hint svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--text-dim);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ========== SECTION SHARED ========== */
+    section { padding: 100px 0; position: relative; }
+
+    .section-tag {
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange-bright);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--text-med);
+      max-width: 520px;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232,117,0,0.2), transparent);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ========== JOURNEY ========== */
+    .journey { padding-top: 80px; }
+
+    .journey-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .journey-step {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 24px;
+      align-items: start;
+      padding: 32px;
+      background: var(--dark-card);
+      border: 1px solid var(--dark-card-border);
+      border-radius: 20px;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .journey-step:hover {
+      border-color: rgba(232,117,0,0.3);
+      transform: translateY(-2px);
+    }
+
+    .step-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .step-icon.orange { background: rgba(232,117,0,0.15); }
+    .step-icon.green { background: rgba(5,61,44,0.3); }
+
+    .step-content h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .step-content p {
+      color: var(--text-med);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .step-highlight {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: rgba(232,117,0,0.1);
+      border: 1px solid rgba(232,117,0,0.2);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--orange-bright);
+      font-weight: 500;
+    }
+
+    .step-highlight.green-hl {
+      background: rgba(5,61,44,0.2);
+      border-color: rgba(13,107,74,0.3);
+      color: #5fd4a4;
+    }
+
+    /* ========== ANALYSIS ========== */
+    .analysis-section {
+      text-align: center;
+      padding: 120px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .analysis-section .bg-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(232,117,0,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .analysis-section .container { position: relative; z-index: 1; }
+
+    .analysis-words {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 40px auto;
+      max-width: 320px;
+    }
+
+    .analysis-word {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      padding: 14px 24px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.5s ease;
+    }
+
+    .analysis-word.lit {
+      color: var(--orange-bright);
+      background: rgba(232,117,0,0.1);
+      border-color: rgba(232,117,0,0.25);
+      box-shadow: 0 0 30px rgba(232,117,0,0.15);
+    }
+
+    .match-stat {
+      margin-top: 40px;
+      display: inline-block;
+      padding: 20px 40px;
+      background: linear-gradient(135deg, var(--orange) 0%, var(--orange-bright) 100%);
+      border-radius: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 8px 40px rgba(232,117,0,0.3);
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .match-stat.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .match-stat .green-accent {
+      color: var(--green-pale);
+    }
+
+    /* ========== OPT-IN ========== */
+    .optin-section {
+      text-align: center;
+      padding: 100px 0 120px;
+    }
+
+    .optin-card {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 48px 40px;
+      background: var(--dark-card);
+      border: 1px solid var(--dark-card-border);
+      border-radius: 24px;
+    }
+
+    .optin-card h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .optin-card .optin-sub {
+      color: var(--text-med);
+      margin-bottom: 28px;
+    }
+
+    .optin-countdown {
+      display: inline-flex;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .optin-countdown .unit {
+      background: rgba(232,117,0,0.1);
+      border: 1px solid rgba(232,117,0,0.2);
+      border-radius: 10px;
+      padding: 12px 10px;
+      min-width: 58px;
+    }
+
+    .optin-countdown .unit .num {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--orange-bright);
+      line-height: 1;
+    }
+
+    .optin-countdown .unit .lbl {
+      display: block;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    .optin-btn {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--orange);
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(232,117,0,0.35);
+      transition: all 0.3s ease;
+    }
+
+    .optin-btn:hover {
+      background: var(--orange-bright);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(232,117,0,0.45);
+    }
+
+    .optin-btn:disabled {
+      background: var(--green-light);
+      box-shadow: 0 4px 24px rgba(13,107,74,0.3);
+      cursor: default;
+      transform: none;
+    }
+
+    .optin-note {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    /* ========== WHAT HAPPENS NEXT (TIMELINE) ========== */
+    .timeline-section { padding: 100px 0 120px; }
+
+    .timeline {
+      margin-top: 48px;
+      position: relative;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--orange), var(--green-light), var(--orange));
+      opacity: 0.3;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 20px;
+      padding-bottom: 40px;
+      position: relative;
+    }
+
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-dot.orange {
+      background: var(--orange);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(232,117,0,0.3);
+    }
+
+    .timeline-dot.green {
+      background: var(--green-light);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(13,107,74,0.3);
+    }
+
+    .timeline-text h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .timeline-text p {
+      font-size: 0.9rem;
+      color: var(--text-med);
+      line-height: 1.6;
+    }
+
+    .timeline-text .email-preview {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border-left: 3px solid var(--orange);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      text-align: center;
+      padding: 40px 24px 48px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    footer .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--orange-bright);
+      margin-bottom: 8px;
+    }
+
+    footer p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 600px) {
+      .hero { padding: 60px 20px 80px; }
+      .hero h1 { font-size: 2.2rem; }
+      .countdown-unit { min-width: 60px; padding: 12px 8px; }
+      .countdown-unit .number { font-size: 1.4rem; }
+      .path-buttons { flex-direction: column; align-items: center; }
+      .path-btn { width: 100%; max-width: 260px; }
+      .journey-step { grid-template-columns: 1fr; gap: 16px; padding: 24px; }
+      .step-icon { width: 48px; height: 48px; font-size: 1.2rem; }
+      .optin-card { padding: 32px 24px; }
+      .analysis-section { padding: 80px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="gradient"></div>
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="grain"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badge">Now live in Dallas</div>
+      <h1>Not a dating app.<br><span class="text-orange">A dating experience.</span></h1>
+      <p class="subtitle">One curated match. One week. Real conversation. Scan the code, pick your path, and let SideQuest handle the rest.</p>
+
+      <div class="countdown-container" id="hero-countdown">
+        <div class="countdown-unit">
+          <span class="number" data-unit="days">--</span>
+          <span class="label">Days</span>
+        </div>
+        <div class="countdown-unit">
+          <span class="number" data-unit="hours">--</span>
+          <span class="label">Hours</span>
+        </div>
+        <div class="countdown-unit">
+          <span class="number" data-unit="mins">--</span>
+          <span class="label">Mins</span>
+        </div>
+        <div class="countdown-unit">
+          <span class="number" data-unit="secs">--</span>
+          <span class="label">Secs</span>
+        </div>
+      </div>
+
+      <div class="path-buttons">
+        <a href="#journey" class="path-btn path-btn-primary">UT Dallas</a>
+        <a href="#journey" class="path-btn path-btn-secondary">Dallas</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <span>See how it works</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ==================== JOURNEY ==================== -->
+  <section class="journey" id="journey">
+    <div class="container">
+      <div class="fade-in">
+        <span class="section-tag">Your journey</span>
+        <h2 class="section-title">Here's exactly what happens.</h2>
+        <p class="section-desc">No swiping. No endless scrolling. Just a short sign-up, a quick survey, and a match built around who you actually are.</p>
+      </div>
+
+      <div class="journey-steps">
+
+        <div class="journey-step fade-in">
+          <div class="step-icon orange">📱</div>
+          <div class="step-content">
+            <h3>Scan &amp; land</h3>
+            <p>Scan the QR code and you're in. The homepage shows a live countdown to the next match drop, plus two clear paths — <strong>UT Dallas</strong> or <strong>Dallas</strong>. Pick yours.</p>
+          </div>
+        </div>
+
+        <div class="journey-step fade-in">
+          <div class="step-icon green">✍️</div>
+          <div class="step-content">
+            <h3>Quick sign-up</h3>
+            <p>Name, email, phone — that's it. No 20-field profiles. You'll pick a profile picture after the survey (just one — keep it real).</p>
+          </div>
+        </div>
+
+        <div class="journey-step fade-in">
+          <div class="step-icon orange">📝</div>
+          <div class="step-content">
+            <h3>Short survey</h3>
+            <p>Answer a few quick questions so we can actually understand who you are and what you're looking for. No long forms — just the good stuff.</p>
+            <span class="step-highlight green-hl">Takes about 2 minutes</span>
+          </div>
+        </div>
+
+        <div class="journey-step fade-in">
+          <div class="step-icon green">🔮</div>
+          <div class="step-content">
+            <h3>The "analysis" moment</h3>
+            <p>After you finish, we run your answers through our matching engine. You'll see: <em>"Churning... Computing... Vectorizing personality traits..."</em> — then the result.</p>
+            <span class="step-highlight">98% chance of a great match</span>
+          </div>
+        </div>
+
+        <div class="journey-step fade-in">
+          <div class="step-icon orange">🎯</div>
+          <div class="step-content">
+            <h3>Opt in for this week</h3>
+            <p>See the countdown again: <strong>"You'll receive your Side Quest in [countdown]."</strong> Hit the button to opt in for this week's drop. That's it — you're locked in.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ==================== ANALYSIS MOMENT ==================== -->
+  <section class="analysis-section" id="analysis">
+    <div class="bg-glow"></div>
+    <div class="container">
+      <div class="fade-in">
+        <span class="section-tag">The magic</span>
+        <h2 class="section-title">We don't just match you.<br>We <span class="text-orange">understand</span> you.</h2>
+      </div>
+
+      <div class="analysis-words" id="analysis-words">
+        <div class="analysis-word">Churning...</div>
+        <div class="analysis-word">Computing...</div>
+        <div class="analysis-word">Vectorizing personality traits...</div>
+      </div>
+
+      <div class="match-stat" id="match-stat">
+        98% chance of getting matched with a <span class="green-accent">great person</span>.
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ==================== OPT-IN ==================== -->
+  <section class="optin-section" id="optin">
+    <div class="container">
+      <div class="optin-card fade-in">
+        <h2>You'll receive your Side Quest in</h2>
+        <p class="optin-sub">One curated match, delivered to your inbox.</p>
+
+        <div class="optin-countdown" id="optin-countdown">
+          <div class="unit">
+            <span class="num" data-unit="days">--</span>
+            <span class="lbl">Days</span>
+          </div>
+          <div class="unit">
+            <span class="num" data-unit="hours">--</span>
+            <span class="lbl">Hours</span>
+          </div>
+          <div class="unit">
+            <span class="num" data-unit="mins">--</span>
+            <span class="lbl">Mins</span>
+          </div>
+          <div class="unit">
+            <span class="num" data-unit="secs">--</span>
+            <span class="lbl">Secs</span>
+          </div>
+        </div>
+
+        <button class="optin-btn" id="optin-btn">Opt in for this week's Side Quest</button>
+        <p class="optin-note">No commitment. You choose every week.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ==================== WHAT HAPPENS NEXT ==================== -->
+  <section class="timeline-section" id="timeline">
+    <div class="container">
+      <div class="fade-in" style="text-align:center; margin-bottom: 8px;">
+        <span class="section-tag">After you opt in</span>
+        <h2 class="section-title" style="max-width:480px;margin-left:auto;margin-right:auto;">What happens next</h2>
+        <p class="section-desc" style="margin-left:auto;margin-right:auto;">Here's the week, from opt-in to your first real conversation.</p>
+      </div>
+
+      <div class="timeline">
+
+        <div class="timeline-item fade-in">
+          <div class="timeline-dot orange">1</div>
+          <div class="timeline-text">
+            <h4>Confirmation email</h4>
+            <p>As soon as you opt in, you get an email confirming you're locked in for this week's Side Quest.</p>
+            <div class="email-preview">"You're in! Your Side Quest drops on [DATE] at [TIME]."</div>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-in">
+          <div class="timeline-dot green">2</div>
+          <div class="timeline-text">
+            <h4>Drop day</h4>
+            <p>On match day, you get an email with a link. Click it, see a short hype moment, then your match's stats (based on both your surveys). One button: <strong>"Start chatting."</strong></p>
+            <div class="email-preview">"Hey, your match is waiting. Click here to start chatting."</div>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-in">
+          <div class="timeline-dot orange">3</div>
+          <div class="timeline-text">
+            <h4>First message</h4>
+            <p>When one person sends a message, the other gets a notification email instantly — so nobody's left waiting.</p>
+            <div class="email-preview">"Your Side Quest just messaged you! Click to respond."</div>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-in">
+          <div class="timeline-dot green">4</div>
+          <div class="timeline-text">
+            <h4>Friday re-opt-in</h4>
+            <p>The Friday before the next drop, we send you a quick email asking if you want in again. Your call — zero pressure. New week, new quest.</p>
+            <div class="email-preview">"Ready for another Side Quest? Opt in for next week."</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer>
+    <div class="logo">SideQuest</div>
+    <p>A dating experience, not a dating app.</p>
+  </footer>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script>
+    // Countdown: next Friday 6 PM
+    function getNextDrop() {
+      const now = new Date();
+      const day = now.getDay();
+      let daysUntil = (5 - day + 7) % 7;
+      if (daysUntil === 0 && now.getHours() >= 18) daysUntil = 7;
+      const drop = new Date(now);
+      drop.setDate(drop.getDate() + daysUntil);
+      drop.setHours(18, 0, 0, 0);
+      if (now >= drop) drop.setDate(drop.getDate() + 7);
+      return drop;
+    }
+
+    function updateCountdown(containerId) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      const drop = getNextDrop();
+
+      function tick() {
+        const diff = drop - new Date();
+        if (diff <= 0) {
+          el.querySelectorAll('[data-unit]').forEach(u => u.textContent = '00');
+          return;
+        }
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        el.querySelector('[data-unit="days"]').textContent = String(d).padStart(2, '0');
+        el.querySelector('[data-unit="hours"]').textContent = String(h).padStart(2, '0');
+        el.querySelector('[data-unit="mins"]').textContent = String(m).padStart(2, '0');
+        el.querySelector('[data-unit="secs"]').textContent = String(s).padStart(2, '0');
+      }
+
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    updateCountdown('hero-countdown');
+    updateCountdown('optin-countdown');
+
+    // Scroll-triggered fade-in
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Analysis animation on scroll
+    const analysisObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const words = document.querySelectorAll('#analysis-words .analysis-word');
+          words.forEach((w, i) => {
+            setTimeout(() => w.classList.add('lit'), i * 700);
+          });
+          setTimeout(() => {
+            document.getElementById('match-stat').classList.add('visible');
+          }, words.length * 700 + 400);
+          analysisObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    analysisObserver.observe(document.getElementById('analysis-words'));
+
+    // Opt-in button
+    document.getElementById('optin-btn').addEventListener('click', function () {
+      this.textContent = "You're in! See you on drop day.";
+      this.disabled = true;
+    });
+  </script>
+
+</body>
+</html>
